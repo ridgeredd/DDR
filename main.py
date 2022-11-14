@@ -3,12 +3,17 @@ import random
 
 camera = uvage.Camera(800, 600)
 
-speed = 1
+speed = 20
 
-arrows = [uvage.from_color(100, 0, "red", 40, 40)]
+arrows = [uvage.from_color(100, 0, "red", 40, 40),
+          uvage.from_color(300, -100, "yellow", 40, 40),
+          uvage.from_color(500, -200, "green", 40, 40),
+          uvage.from_color(700, -300, "blue", 40, 40)]
 
 def tick():
     global arrows
+
+    new_arrow = []
 
     camera.clear("black")
 
@@ -30,9 +35,11 @@ def tick():
         item.y += speed
         camera.draw(item)
 
-        camera.display
+    camera.display()
 
-uvage.timer_loop(30, tick)
+ticks_per_second = 30
+
+uvage.timer_loop(ticks_per_second, tick)
 
 
 
