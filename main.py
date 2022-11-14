@@ -17,8 +17,9 @@ def tick():
 
     camera.clear("black")
 
-    if arrows[-1].top > camera.bottom:
-        del(arrows[-1])
+    if arrows[-1].top > camera.bottom or len(arrows) == 0:
+        if arrows[-1].top > camera.bottom:
+            del(arrows[-1])
         x = random.randint(0, 5)
         if x == 1:
             new_arrow = uvage.from_color(100, 0, "red", 40, 40)
