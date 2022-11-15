@@ -3,6 +3,10 @@ import random
 
 tick_count = 0
 
+grace = False
+grace_period = 0
+zone_hit = ""
+
 camera = uvage.Camera(800, 600)
 
 okay_zone = uvage.from_color(400, 530, "black", 800, 140)
@@ -11,6 +15,7 @@ excellent_zone = uvage.from_color(400, 530, "black", 800, 60)
 perfect_zone = uvage.from_color(400, 530, "white", 800, 20)
 
 arrows = []
+
 
 def find_arrow_zone():
     if arrows[0][0].touches(perfect_zone):
@@ -24,13 +29,15 @@ def find_arrow_zone():
     del (arrows[0])
     return return_zone
 
+
 def tick():
     global arrows
     global tick_count
+    global grace
+    global grace_period
+    global zone_hit
 
-    zone_hit = ""
-
-    speed = tick_count // 500 + 5
+    speed = tick_count // 250 + 5
 
     new_arrow = []
 
@@ -40,6 +47,11 @@ def tick():
     camera.draw(good_zone)
     camera.draw(excellent_zone)
     camera.draw(perfect_zone)
+
+    if grace_period % 10 == 0:
+        grace = False
+        grace_period = 0
+        zone_hit = ""
 
     if len(arrows) != 0 and arrows[0][0].top > camera.bottom:
         del(arrows[0])
@@ -58,29 +70,34 @@ def tick():
             new_arrow = [uvage.from_color(700, -100, "blue", 40, 40), "blue"]
         arrows += [new_arrow]
 
-    if uvage.is_pressing("left arrow"):
-        if arrows[0][1] == "red" and arrows[0][0].touches(okay_zone):
-            zone_hit = find_arrow_zone()
-        else:
-            zone_hit = "miss"
+    if not grace:
+        if uvage.is_pressing("left arrow"):
+            if arrows[0][1] == "red" and arrows[0][0].touches(okay_zone):
+                zone_hit = find_arrow_zone()
+            else:
+                zone_hit = "miss"
+            grace = True
 
-    if uvage.is_pressing("up arrow"):
-        if arrows[0][1] == "yellow" and arrows[0][0].touches(okay_zone):
-            zone_hit = find_arrow_zone()
-        else:
-            zone_hit = "miss"
+        if uvage.is_pressing("up arrow"):
+            if arrows[0][1] == "yellow" and arrows[0][0].touches(okay_zone):
+                zone_hit = find_arrow_zone()
+            else:
+                zone_hit = "miss"
+            grace = True
 
-    if uvage.is_pressing("down arrow"):
-        if arrows[0][1] == "green" and arrows[0][0].touches(okay_zone):
-            zone_hit = find_arrow_zone()
-        else:
-            zone_hit = "miss"
+        if uvage.is_pressing("down arrow"):
+            if arrows[0][1] == "green" and arrows[0][0].touches(okay_zone):
+                zone_hit = find_arrow_zone()
+            else:
+                zone_hit = "miss"
+            grace = True
 
-    if uvage.is_pressing("right arrow"):
-        if arrows[0][1] == "blue" and arrows[0][0].touches(okay_zone):
-            zone_hit = find_arrow_zone()
-        else:
-            zone_hit = "miss"
+        if uvage.is_pressing("right arrow"):
+            if arrows[0][1] == "blue" and arrows[0][0].touches(okay_zone):
+                zone_hit = find_arrow_zone()
+            else:
+                zone_hit = "miss"
+            grace = True
 
     for item in arrows:
         item[0].y += speed
@@ -91,8 +108,11 @@ def tick():
     camera.draw(zone_feedback)
 
     tick_count += 1
+    if grace:
+        grace_period += 1
 
     camera.display()
+
 
 ticks_per_second = 30
 
