@@ -12,11 +12,23 @@ perfect_zone = uvage.from_color(400, 530, "white", 800, 20)
 
 arrows = []
 
+def find_arrow_zone():
+    if arrows[0][0].touches(perfect_zone):
+        return_zone = "perfect"
+    elif arrows[0][0].touches(excellent_zone):
+        return_zone = "excellent"
+    elif arrows[0][0].touches(good_zone):
+        return_zone = "good"
+    else:
+        return_zone = "okay"
+    del (arrows[0])
+    return return_zone
+
 def tick():
     global arrows
     global tick_count
 
-    zone_hit = "miss"
+    zone_hit = ""
 
     speed = tick_count // 500 + 5
 
@@ -46,53 +58,33 @@ def tick():
             new_arrow = [uvage.from_color(700, -100, "blue", 40, 40), "blue"]
         arrows += [new_arrow]
 
+    if uvage.is_pressing("left arrow"):
+        if arrows[0][1] == "red" and arrows[0][0].touches(okay_zone):
+            zone_hit = find_arrow_zone()
+        else:
+            zone_hit = "miss"
+
+    if uvage.is_pressing("up arrow"):
+        if arrows[0][1] == "yellow" and arrows[0][0].touches(okay_zone):
+            zone_hit = find_arrow_zone()
+        else:
+            zone_hit = "miss"
+
+    if uvage.is_pressing("down arrow"):
+        if arrows[0][1] == "green" and arrows[0][0].touches(okay_zone):
+            zone_hit = find_arrow_zone()
+        else:
+            zone_hit = "miss"
+
+    if uvage.is_pressing("right arrow"):
+        if arrows[0][1] == "blue" and arrows[0][0].touches(okay_zone):
+            zone_hit = find_arrow_zone()
+        else:
+            zone_hit = "miss"
+
     for item in arrows:
         item[0].y += speed
         camera.draw(item[0])
-
-    if uvage.is_pressing("left arrow"):
-        if arrows[0][1] == "red":
-            if arrows[0][0].touches(perfect_zone):
-                zone_hit = "perfect"
-            elif arrows[0][0].touches(excellent_zone):
-                zone_hit = "excellent"
-            elif arrows[0][0].touches(good_zone):
-                zone_hit = "good"
-            elif arrows[0][0].touches(okay_zone):
-                zone_hit = "okay"
-
-    if uvage.is_pressing("up arrow"):
-        if arrows[0][1] == "yellow":
-            if arrows[0][0].touches(perfect_zone):
-                zone_hit = "perfect"
-            elif arrows[0][0].touches(excellent_zone):
-                zone_hit = "excellent"
-            elif arrows[0][0].touches(good_zone):
-                zone_hit = "good"
-            elif arrows[0][0].touches(okay_zone):
-                zone_hit = "okay"
-
-    if uvage.is_pressing("down arrow"):
-        if arrows[0][1] == "green":
-            if arrows[0][0].touches(perfect_zone):
-                zone_hit = "perfect"
-            elif arrows[0][0].touches(excellent_zone):
-                zone_hit = "excellent"
-            elif arrows[0][0].touches(good_zone):
-                zone_hit = "good"
-            elif arrows[0][0].touches(okay_zone):
-                zone_hit = "okay"
-
-    if uvage.is_pressing("right arrow"):
-        if arrows[0][1] == "blue":
-            if arrows[0][0].touches(perfect_zone):
-                zone_hit = "perfect"
-            elif arrows[0][0].touches(excellent_zone):
-                zone_hit = "excellent"
-            elif arrows[0][0].touches(good_zone):
-                zone_hit = "good"
-            elif arrows[0][0].touches(okay_zone):
-                zone_hit = "okay"
 
     zone_feedback = uvage.from_text(400, 200, zone_hit, 30, "white")
 
