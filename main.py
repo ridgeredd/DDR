@@ -61,13 +61,13 @@ def tick():
         if x == 0:
             new_arrow = [uvage.from_color(-100, -100, "black", 40, 40), "black"]
         if 1 <= x < 3:
-            new_arrow = [uvage.from_color(100, -100, "red", 40, 40), "red"]
+            new_arrow = [uvage.from_image(100, -100, "left_arrow.png"), "red"]
         elif 3 <= x < 5:
-            new_arrow = [uvage.from_color(300, -100, "yellow", 40, 40), "yellow"]
+            new_arrow = [uvage.from_image(300, -100, "down_arrow.png"), "yellow"]
         elif 5 <= x < 7:
-            new_arrow = [uvage.from_color(500, -100, "green", 40, 40), "green"]
+            new_arrow = [uvage.from_image(500, -100, "up_arrow.png"), "green"]
         elif 7 <= x < 9:
-            new_arrow = [uvage.from_color(700, -100, "blue", 40, 40), "blue"]
+            new_arrow = [uvage.from_image(700, -100, "right_arrow.png"), "blue"]
         arrows += [new_arrow]
 
     if not grace:
