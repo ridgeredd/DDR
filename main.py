@@ -15,6 +15,7 @@ excellent_zone = uvage.from_color(400, 530, "black", 800, 60)
 perfect_zone = uvage.from_color(400, 530, "white", 800, 20)
 
 arrows = []
+hit_arrows = []
 
 
 def find_arrow_zone():
@@ -26,7 +27,8 @@ def find_arrow_zone():
         return_zone = "good"
     else:
         return_zone = "okay"
-    del (arrows[0])
+    hit_arrows += [uvage.from_image(arrows[0].x, arrows[0].y, arrows[1] + "_arrow_hit.png"), arrows[1]]
+    del(arrows[0])
     return return_zone
 
 
@@ -36,6 +38,7 @@ def tick():
     global grace
     global grace_period
     global zone_hit
+    global hit_arrows
 
     speed = tick_count // 250 + 5
 
@@ -56,44 +59,47 @@ def tick():
     if len(arrows) != 0 and arrows[0][0].top > camera.bottom:
         del(arrows[0])
 
+    if len(arrows) != 0 and hit_arrows[0][0].top > camera.bottom:
+        del(arrows[0])
+
     if len(arrows) == 0 or arrows[-1][0].y >= 50:
         x = random.randint(0, 8)
         if x == 0:
             new_arrow = [uvage.from_color(-100, -100, "black", 40, 40), "black"]
         if 1 <= x < 3:
-            new_arrow = [uvage.from_image(100, -100, "left_arrow.png"), "red"]
+            new_arrow = [uvage.from_image(100, -100, "left_arrow.png"), "left"]
         elif 3 <= x < 5:
-            new_arrow = [uvage.from_image(300, -100, "down_arrow.png"), "yellow"]
+            new_arrow = [uvage.from_image(300, -100, "down_arrow.png"), "down"]
         elif 5 <= x < 7:
-            new_arrow = [uvage.from_image(500, -100, "up_arrow.png"), "green"]
+            new_arrow = [uvage.from_image(500, -100, "up_arrow.png"), "up"]
         elif 7 <= x < 9:
-            new_arrow = [uvage.from_image(700, -100, "right_arrow.png"), "blue"]
+            new_arrow = [uvage.from_image(700, -100, "right_arrow.png"), "right"]
         arrows += [new_arrow]
 
     if not grace:
         if uvage.is_pressing("left arrow"):
-            if arrows[0][1] == "red" and arrows[0][0].touches(okay_zone):
+            if arrows[0][1] == "left" and arrows[0][0].touches(okay_zone):
                 zone_hit = find_arrow_zone()
             else:
                 zone_hit = "miss"
             grace = True
 
         if uvage.is_pressing("up arrow"):
-            if arrows[0][1] == "yellow" and arrows[0][0].touches(okay_zone):
+            if arrows[0][1] == "up" and arrows[0][0].touches(okay_zone):
                 zone_hit = find_arrow_zone()
             else:
                 zone_hit = "miss"
             grace = True
 
         if uvage.is_pressing("down arrow"):
-            if arrows[0][1] == "green" and arrows[0][0].touches(okay_zone):
+            if arrows[0][1] == "down" and arrows[0][0].touches(okay_zone):
                 zone_hit = find_arrow_zone()
             else:
                 zone_hit = "miss"
             grace = True
 
         if uvage.is_pressing("right arrow"):
-            if arrows[0][1] == "blue" and arrows[0][0].touches(okay_zone):
+            if arrows[0][1] == "right" and arrows[0][0].touches(okay_zone):
                 zone_hit = find_arrow_zone()
             else:
                 zone_hit = "miss"
