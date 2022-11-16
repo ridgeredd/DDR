@@ -9,14 +9,16 @@ zone_hit = ""
 streak = 0
 streak_display = ""
 speed = 7
+health = 390
 
-camera = uvage.Camera(800, 600)
+camera = uvage.Camera(1000, 600)
 
 #change so that arrow has to be entirely within zone to be perfect
 okay_zone = uvage.from_color(400, 530, "white", 800, 50)
 good_zone = uvage.from_color(400, 530, "white", 800, 30)
 excellent_zone = uvage.from_color(400, 530, "white", 800, 10)
 perfect_zone = uvage.from_color(400, 530, "black", 800, 5)
+health_bar = uvage.from_image(900, 250, "health_bar.png")
 
 target_arrows = []
 hit_arrows = []
@@ -49,18 +51,20 @@ def find_arrow_zone():
 
 
 def button_pressed(key):
-    global zone_hit, streak, grace, missed_arrows
+    global zone_hit, streak, grace, missed_arrows, health
     zone_hit = "miss"
     if len(target_arrows) != 0:
         if target_arrows[0][1] == key and target_arrows[0][0].touches(okay_zone):
             zone_hit = find_arrow_zone()
         else:
             streak = 0
+            health -= 50
             missed_arrows += [
                 [uvage.from_image(target_arrows[0][0].x, target_arrows[0][0].y, target_arrows[0][1] + "_arrow_missed.png"),
                  target_arrows[0][1]]]
             del (target_arrows[0])
     else:
+        health -= 50
         streak = 0
     grace = True
     return
@@ -141,6 +145,12 @@ def tick():
     streak_counter = uvage.from_text(400, 300, streak_display, 30, "black")
 
     camera.draw(streak_counter)
+
+    health_meter = uvage.from_color(900, 640 - health, "red", 40, 390)
+
+    camera.draw(health_meter)
+
+    camera.draw(health_bar)
 
     tick_count += 1
     if grace:
