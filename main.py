@@ -19,6 +19,8 @@ hit_arrows = []
 
 
 def find_arrow_zone():
+    global arrows
+    global hit_arrows
     if arrows[0][0].touches(perfect_zone):
         return_zone = "perfect"
     elif arrows[0][0].touches(excellent_zone):
@@ -27,7 +29,7 @@ def find_arrow_zone():
         return_zone = "good"
     else:
         return_zone = "okay"
-    hit_arrows += [uvage.from_image(arrows[0].x, arrows[0].y, arrows[1] + "_arrow_hit.png"), arrows[1]]
+    hit_arrows += [[uvage.from_image(arrows[0][0].x, arrows[0][0].y, arrows[0][1] + "_arrow_hit.png"), arrows[0][1]]]
     del(arrows[0])
     return return_zone
 
@@ -39,6 +41,8 @@ def tick():
     global grace_period
     global zone_hit
     global hit_arrows
+
+    print(hit_arrows)
 
     speed = tick_count // 250 + 5
 
@@ -59,8 +63,8 @@ def tick():
     if len(arrows) != 0 and arrows[0][0].top > camera.bottom:
         del(arrows[0])
 
-    if len(arrows) != 0 and hit_arrows[0][0].top > camera.bottom:
-        del(arrows[0])
+    if len(hit_arrows) != 0 and hit_arrows[0][0].top > camera.bottom:
+        del(hit_arrows[0])
 
     if len(arrows) == 0 or arrows[-1][0].y >= 50:
         x = random.randint(0, 8)
@@ -106,6 +110,10 @@ def tick():
             grace = True
 
     for item in arrows:
+        item[0].y += speed
+        camera.draw(item[0])
+
+    for item in hit_arrows:
         item[0].y += speed
         camera.draw(item[0])
 
