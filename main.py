@@ -12,10 +12,11 @@ speed = 7
 
 camera = uvage.Camera(800, 600)
 
-okay_zone = uvage.from_color(400, 530, "white", 800, 140)
-good_zone = uvage.from_color(400, 530, "white", 800, 100)
-excellent_zone = uvage.from_color(400, 530, "white", 800, 60)
-perfect_zone = uvage.from_color(400, 530, "black", 800, 20)
+#change so that arrow has to be entirely within zone to be perfect
+okay_zone = uvage.from_color(400, 530, "white", 800, 50)
+good_zone = uvage.from_color(400, 530, "white", 800, 30)
+excellent_zone = uvage.from_color(400, 530, "white", 800, 10)
+perfect_zone = uvage.from_color(400, 530, "black", 800, 5)
 
 target_arrows = []
 hit_arrows = []
