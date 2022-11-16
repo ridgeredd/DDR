@@ -2,7 +2,7 @@
 # West Plowman dzy5mz
 
 """
-Game ideas:
+Game idea:
 Dance Dance Revolution type game
 Directional arrows will drop down from the top of the screen
 The player must hit the corresponding arrow on their keyboard when the arrows hit a line at the bottom of the camera

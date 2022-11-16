@@ -26,9 +26,7 @@ missed_arrows = []
 
 
 def find_arrow_zone():
-    global arrows
-    global hit_arrows
-    global streak
+    global arrows, hit_arrows, streak
     if arrows[0][0].touches(perfect_zone):
         return_zone = "perfect"
     elif arrows[0][0].touches(excellent_zone):
@@ -44,14 +42,7 @@ def find_arrow_zone():
 
 
 def tick():
-    global arrows
-    global tick_count
-    global grace
-    global grace_period
-    global zone_hit
-    global hit_arrows
-    global streak
-    global missed_arrows
+    global arrows, tick_count, grace, grace_period, zone_hit, hit_arrows, streak, missed_arrows
 
     speed = tick_count // 1000 + 7
 
