@@ -1,11 +1,17 @@
 import uvage
 import random
 
+# need to separate none arrows from arrow list so that missing a blank turns next arrow red
+# need to check if last none arrow > 50 (if none arrows exist) as well as reg arrows to create new arrow
+# then delete last none arrow so not double counted
+# also doesn't set streak to 0 if none arrow missed
+
 tick_count = 0
 
 grace = False
 grace_period = 0
 zone_hit = ""
+streak = 0
 
 camera = uvage.Camera(800, 600)
 
@@ -16,11 +22,13 @@ perfect_zone = uvage.from_color(400, 530, "white", 800, 20)
 
 arrows = []
 hit_arrows = []
+missed_arrows = []
 
 
 def find_arrow_zone():
     global arrows
     global hit_arrows
+    global streak
     if arrows[0][0].touches(perfect_zone):
         return_zone = "perfect"
     elif arrows[0][0].touches(excellent_zone):
@@ -31,6 +39,7 @@ def find_arrow_zone():
         return_zone = "okay"
     hit_arrows += [[uvage.from_image(arrows[0][0].x, arrows[0][0].y, arrows[0][1] + "_arrow_hit.png"), arrows[0][1]]]
     del(arrows[0])
+    streak += 1
     return return_zone
 
 
@@ -41,10 +50,10 @@ def tick():
     global grace_period
     global zone_hit
     global hit_arrows
+    global streak
+    global missed_arrows
 
-    print(hit_arrows)
-
-    speed = tick_count // 250 + 5
+    speed = tick_count // 1000 + 7
 
     new_arrow = []
 
@@ -62,14 +71,18 @@ def tick():
 
     if len(arrows) != 0 and arrows[0][0].top > camera.bottom:
         del(arrows[0])
+        streak = 0
 
     if len(hit_arrows) != 0 and hit_arrows[0][0].top > camera.bottom:
         del(hit_arrows[0])
 
+    if len(missed_arrows) != 0 and missed_arrows[0][0].top > camera.bottom:
+        del(missed_arrows[0])
+
     if len(arrows) == 0 or arrows[-1][0].y >= 50:
         x = random.randint(0, 8)
         if x == 0:
-            new_arrow = [uvage.from_color(-100, -100, "black", 40, 40), "black"]
+            new_arrow = [uvage.from_color(-100, -100, "black", 40, 40), "none"]
         if 1 <= x < 3:
             new_arrow = [uvage.from_image(100, -100, "left_arrow.png"), "left"]
         elif 3 <= x < 5:
@@ -86,6 +99,10 @@ def tick():
                 zone_hit = find_arrow_zone()
             else:
                 zone_hit = "miss"
+                streak = 0
+                missed_arrows += [
+                    [uvage.from_image(arrows[0][0].x, arrows[0][0].y, arrows[0][1] + "_arrow_missed.png"), arrows[0][1]]]
+                del (arrows[0])
             grace = True
 
         if uvage.is_pressing("up arrow"):
@@ -93,6 +110,11 @@ def tick():
                 zone_hit = find_arrow_zone()
             else:
                 zone_hit = "miss"
+                streak = 0
+                missed_arrows += [
+                    [uvage.from_image(arrows[0][0].x, arrows[0][0].y, arrows[0][1] + "_arrow_missed.png"),
+                     arrows[0][1]]]
+                del (arrows[0])
             grace = True
 
         if uvage.is_pressing("down arrow"):
@@ -100,6 +122,11 @@ def tick():
                 zone_hit = find_arrow_zone()
             else:
                 zone_hit = "miss"
+                streak = 0
+                missed_arrows += [
+                    [uvage.from_image(arrows[0][0].x, arrows[0][0].y, arrows[0][1] + "_arrow_missed.png"),
+                     arrows[0][1]]]
+                del (arrows[0])
             grace = True
 
         if uvage.is_pressing("right arrow"):
@@ -107,6 +134,11 @@ def tick():
                 zone_hit = find_arrow_zone()
             else:
                 zone_hit = "miss"
+                streak = 0
+                missed_arrows += [
+                    [uvage.from_image(arrows[0][0].x, arrows[0][0].y, arrows[0][1] + "_arrow_missed.png"),
+                     arrows[0][1]]]
+                del (arrows[0])
             grace = True
 
     for item in arrows:
@@ -114,6 +146,10 @@ def tick():
         camera.draw(item[0])
 
     for item in hit_arrows:
+        item[0].y += speed
+        camera.draw(item[0])
+
+    for item in missed_arrows:
         item[0].y += speed
         camera.draw(item[0])
 
