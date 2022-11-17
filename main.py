@@ -26,7 +26,7 @@ excellent_zone = uvage.from_color(400, 530, "white", 800, 10)
 perfect_zone = uvage.from_color(400, 530, "black", 800, 5)
 health_bar = uvage.from_image(900, 250, "health_bar.png")
 
-starting_screen = uvage.from_text(400, 200, "Computer Science Computer Science Revolution\npress space bar to start", 50, "black")
+starting_screen = uvage.from_text(400, 200, "press space bar to start", 50, "black")
 
 target_arrows = []
 hit_arrows = []
