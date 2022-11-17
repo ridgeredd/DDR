@@ -10,10 +10,14 @@ streak = 0
 streak_display = ""
 speed = 7
 health = 390
+regen = 5/30
 
 camera = uvage.Camera(1000, 600)
 
-#change so that arrow has to be entirely within zone to be perfect
+# make start and ending screen
+# make it so everything stops when health = 0
+# score counter
+# change so that arrow has to be entirely within zone to be perfect
 okay_zone = uvage.from_color(400, 530, "white", 800, 50)
 good_zone = uvage.from_color(400, 530, "white", 800, 30)
 excellent_zone = uvage.from_color(400, 530, "white", 800, 10)
@@ -71,17 +75,18 @@ def button_pressed(key):
 
 
 def del_arrows(arrow_type):
-    global streak, target_arrows, all_arrows, missed_arrows, hit_arrows
+    global streak, target_arrows, all_arrows, missed_arrows, hit_arrows, health
     if len(arrow_type) != 0 and arrow_type[0][0].top > camera.bottom:
         del (arrow_type[0])
         if arrow_type == target_arrows:
             streak = 0
+            health -= 25
     return
 
 
 def tick():
     global target_arrows, tick_count, grace, grace_period, zone_hit, hit_arrows, streak, missed_arrows, all_arrows, \
-        streak_display, speed
+        streak_display, speed, regen, health
 
     speed = tick_count // 1000 + 7
 
@@ -145,6 +150,12 @@ def tick():
     streak_counter = uvage.from_text(400, 300, streak_display, 30, "black")
 
     camera.draw(streak_counter)
+
+    if streak >= 15 and health < 390:
+        health += regen
+
+    if health > 390:
+        health = 390
 
     health_meter = uvage.from_color(900, 640 - health, "red", 40, 390)
 
