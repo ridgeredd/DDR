@@ -3,6 +3,8 @@ import random
 
 tick_count = 0
 
+game_on = False
+
 grace = False
 grace_period = 0
 zone_hit = ""
@@ -24,6 +26,8 @@ excellent_zone = uvage.from_color(400, 530, "white", 800, 10)
 perfect_zone = uvage.from_color(400, 530, "black", 800, 5)
 health_bar = uvage.from_image(900, 250, "health_bar.png")
 
+starting_screen = uvage.from_text(400, 200, "Computer Science Computer Science Revolution\npress space bar to start", 50, "black")
+
 target_arrows = []
 hit_arrows = []
 missed_arrows = []
@@ -32,7 +36,8 @@ all_arrows = []
 
 def display_arrows(arrow_list):
     for item in arrow_list:
-        item[0].y += speed
+        if game_on:
+            item[0].y += speed
         camera.draw(item[0])
     return
 
@@ -86,86 +91,96 @@ def del_arrows(arrow_type):
 
 def tick():
     global target_arrows, tick_count, grace, grace_period, zone_hit, hit_arrows, streak, missed_arrows, all_arrows, \
-        streak_display, speed, regen, health
-
-    speed = tick_count // 1000 + 7
-
-    new_arrow = []
+        streak_display, speed, regen, health, game_on
 
     camera.clear("white")
+
+    if not game_on:
+        camera.draw(starting_screen)
+        if uvage.is_pressing("space"):
+            game_on = True
 
     camera.draw(okay_zone)
     camera.draw(good_zone)
     camera.draw(excellent_zone)
     camera.draw(perfect_zone)
 
-    if grace_period % 10 == 0:
-        grace = False
-        grace_period = 0
-        zone_hit = ""
-        streak_display = ""
+    if game_on:
 
-    del_arrows(target_arrows)
-    del_arrows(hit_arrows)
-    del_arrows(missed_arrows)
-    del_arrows(all_arrows)
+        speed = tick_count // 1000 + 7
 
-    if len(all_arrows) == 0 or all_arrows[-1][0].y >= 50:
-        x = random.randint(0, 8)
-        blank_arrow = [uvage.from_color(-100, -100, "black", 40, 40), "none"]
-        if 1 <= x < 3:
-            new_arrow = [uvage.from_image(100, -100, "left_arrow.png"), "left"]
-        elif 3 <= x < 5:
-            new_arrow = [uvage.from_image(300, -100, "down_arrow.png"), "down"]
-        elif 5 <= x < 7:
-            new_arrow = [uvage.from_image(500, -100, "up_arrow.png"), "up"]
-        elif 7 <= x < 9:
-            new_arrow = [uvage.from_image(700, -100, "right_arrow.png"), "right"]
-        if new_arrow:
-            target_arrows += [new_arrow]
-        all_arrows += [blank_arrow]
+        new_arrow = []
 
-    if not grace:
-        if uvage.is_pressing("left arrow"):
-            button_pressed("left")
+        if grace_period % 10 == 0:
+            grace = False
+            grace_period = 0
+            zone_hit = ""
+            streak_display = ""
 
-        if uvage.is_pressing("up arrow"):
-            button_pressed("up")
+        del_arrows(target_arrows)
+        del_arrows(hit_arrows)
+        del_arrows(missed_arrows)
+        del_arrows(all_arrows)
 
-        if uvage.is_pressing("down arrow"):
-            button_pressed("down")
+        if len(all_arrows) == 0 or all_arrows[-1][0].y >= 50:
+            x = random.randint(0, 8)
+            blank_arrow = [uvage.from_color(-100, -100, "black", 40, 40), "none"]
+            if 1 <= x < 3:
+                new_arrow = [uvage.from_image(100, -100, "left_arrow.png"), "left"]
+            elif 3 <= x < 5:
+                new_arrow = [uvage.from_image(300, -100, "down_arrow.png"), "down"]
+            elif 5 <= x < 7:
+                new_arrow = [uvage.from_image(500, -100, "up_arrow.png"), "up"]
+            elif 7 <= x < 9:
+                new_arrow = [uvage.from_image(700, -100, "right_arrow.png"), "right"]
+            if new_arrow:
+                target_arrows += [new_arrow]
+            all_arrows += [blank_arrow]
 
-        if uvage.is_pressing("right arrow"):
-            button_pressed("right")
+        if not grace:
+            if uvage.is_pressing("left arrow"):
+                button_pressed("left")
+
+            if uvage.is_pressing("up arrow"):
+                button_pressed("up")
+
+            if uvage.is_pressing("down arrow"):
+                button_pressed("down")
+
+            if uvage.is_pressing("right arrow"):
+                button_pressed("right")
+
+        if health <= 0:
+            game_on = False
+
+        zone_feedback = uvage.from_text(400, 200, zone_hit, 30, "black")
+
+        camera.draw(zone_feedback)
+
+        streak_counter = uvage.from_text(400, 300, streak_display, 30, "black")
+
+        camera.draw(streak_counter)
+
+        if streak >= 15 and health < 390:
+            health += regen
+
+        if health > 390:
+            health = 390
+
+        tick_count += 1
+        if grace:
+            grace_period += 1
 
     display_arrows(target_arrows)
     display_arrows(hit_arrows)
     display_arrows(missed_arrows)
     display_arrows(all_arrows)
 
-    zone_feedback = uvage.from_text(400, 200, zone_hit, 30, "black")
-
-    camera.draw(zone_feedback)
-
-    streak_counter = uvage.from_text(400, 300, streak_display, 30, "black")
-
-    camera.draw(streak_counter)
-
-    if streak >= 15 and health < 390:
-        health += regen
-
-    if health > 390:
-        health = 390
-
     health_meter = uvage.from_color(900, 640 - health, "red", 40, 390)
 
     camera.draw(health_meter)
 
     camera.draw(health_bar)
-
-    tick_count += 1
-    if grace:
-        grace_period += 1
 
     camera.display()
 
