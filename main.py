@@ -14,6 +14,8 @@ speed = 7
 health = 390
 regen = 5/30
 
+highlight = uvage.from_color(-100, -100, "black", 40, 40)
+
 camera = uvage.Camera(1000, 600)
 
 # make start and ending screen
@@ -22,13 +24,23 @@ camera = uvage.Camera(1000, 600)
 # change so that arrow has to be entirely within zone to be perfect
 # still check to see within okay zone first
 # make line translucent and flash color of arrow input
+# speed ramp up
 okay_zone = uvage.from_color(400, 530, "white", 800, 50)
 good_zone = uvage.from_color(400, 530, "white", 800, 30)
 excellent_zone = uvage.from_color(400, 530, "white", 800, 10)
-perfect_zone = uvage.from_color(400, 530, "black", 800, 5)
+perfect_zone = uvage.from_color(400, 530, "black", 800, 4)
 health_bar = uvage.from_image(900, 250, "health_bar.png")
 
 starting_screen = uvage.from_text(400, 200, "press space bar to start", 50, "black")
+
+left_target = uvage.from_image(100, 530, "left_arrow_hit.png")
+
+down_target = uvage.from_image(300, 530, "down_arrow_hit.png")
+
+up_target = uvage.from_image(500, 530, "up_arrow_hit.png")
+
+right_target = uvage.from_image(700, 530, "right_arrow_hit.png")
+
 
 target_arrows = []
 hit_arrows = []
@@ -38,7 +50,7 @@ all_arrows = []
 
 def display_arrows(arrow_list):
     for item in arrow_list:
-        if game_on:
+        if game_on and not missed_arrows:
             item[0].y += speed
         camera.draw(item[0])
     return
@@ -93,7 +105,7 @@ def del_arrows(arrow_type):
 
 def tick():
     global target_arrows, tick_count, grace, grace_period, zone_hit, hit_arrows, streak, missed_arrows, all_arrows, \
-        streak_display, speed, regen, health, game_on
+        streak_display, speed, regen, health, game_on, highlight
 
     camera.clear("white")
 
@@ -107,11 +119,21 @@ def tick():
     camera.draw(excellent_zone)
     camera.draw(perfect_zone)
 
+    camera.draw(left_target)
+    camera.draw(right_target)
+    camera.draw(up_target)
+    camera.draw(down_target)
+
     if game_on:
 
-        speed = tick_count // 1000 + 7
-
         new_arrow = []
+
+        if grace_period:
+            camera.draw(highlight)
+
+        if grace_period and grace_period % 10 == 0:
+            if missed_arrows:
+                del missed_arrows[0]
 
         if grace_period % 10 == 0:
             grace = False
@@ -142,16 +164,16 @@ def tick():
         if not grace:
             if uvage.is_pressing("left arrow"):
                 button_pressed("left")
-
-            if uvage.is_pressing("up arrow"):
-                button_pressed("up")
-
+                highlight = uvage.from_image(100, 530, "left_arrow.png")
             if uvage.is_pressing("down arrow"):
                 button_pressed("down")
-
+                highlight = uvage.from_image(300, 530, "down_arrow.png")
+            if uvage.is_pressing("up arrow"):
+                button_pressed("up")
+                highlight = uvage.from_image(500, 530, "up_arrow.png")
             if uvage.is_pressing("right arrow"):
                 button_pressed("right")
-
+                highlight = uvage.from_image(700, 530, "right_arrow.png")
         if health <= 0:
             game_on = False
 
