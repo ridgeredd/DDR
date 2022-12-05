@@ -23,13 +23,11 @@ highlight = uvage.from_color(-100, -100, "black", 40, 40)
 
 camera = uvage.Camera(800, 600)
 
-# make start and ending screen
-# make it so everything stops when health = 0
-# score counter
-# change so that arrow has to be entirely within zone to be perfect
-# still check to see within okay zone first
-# make line translucent and flash color of arrow input
-# speed ramp up
+# make better ending screen
+# file writing for score
+# score counter in top left next to health bar
+# different scores for perfect, good, etc
+
 okay_zone = uvage.from_color(400, 530, "white", 800, 50)
 good_zone = uvage.from_color(400, 530, "white", 800, 30)
 excellent_zone = uvage.from_color(400, 530, "white", 800, 10)
