@@ -43,7 +43,7 @@ starting_screen = [uvage.from_text(400, 200, "COMPUTER SCIENCE", 50, "blue"),
                    uvage.from_text(400, 300, "REVOLUTION", 50, "green")]
 space_to_start = uvage.from_text(400, 400, "press space bar to start", 50, "black")
 
-game_over_screen = uvage.from_text(400, 200, "GAME OVER", 50, "red", bold = True)
+game_over_screen = uvage.from_text(400, 300, "GAME OVER", 50, "red", bold = True)
 
 left_target = uvage.from_image(100, 530, "left_arrow_hit.png")
 
@@ -161,6 +161,8 @@ def tick():
 
     # clears camera
     camera.clear("white")
+
+    speed = 7 + tick_count // 500
 
     # draws the hit zones which register how well arrow was hit
     camera.draw(okay_zone)
