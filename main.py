@@ -6,6 +6,7 @@ tick_count = 0
 game_on = False
 
 grace = False
+game_over = False
 grace_period = 0
 zone_hit = ""
 streak = 0
@@ -13,6 +14,7 @@ streak_display = ""
 speed = 7
 health = 390
 regen = 5/30
+points = 0
 
 highlight = uvage.from_color(-100, -100, "black", 40, 40)
 
@@ -32,6 +34,8 @@ perfect_zone = uvage.from_color(400, 530, "black", 800, 4)
 health_bar = uvage.from_image(900, 250, "health_bar.png")
 
 starting_screen = uvage.from_text(400, 200, "press space bar to start", 50, "black")
+
+game_over_screen = uvage.from_text(400, 200, "GAME OVER", 50, "red", bold = True)
 
 left_target = uvage.from_image(100, 530, "left_arrow_hit.png")
 
@@ -57,15 +61,19 @@ def display_arrows(arrow_list):
 
 
 def find_arrow_zone():
-    global target_arrows, hit_arrows, streak, streak_display
+    global target_arrows, hit_arrows, streak, streak_display, points
     if target_arrows[0][0].touches(perfect_zone):
         return_zone = "perfect"
+        points += 100
     elif target_arrows[0][0].touches(excellent_zone):
         return_zone = "excellent"
+        points += 70
     elif target_arrows[0][0].touches(good_zone):
         return_zone = "good"
+        points += 50
     else:
         return_zone = "okay"
+        points += 40
     hit_arrows += [[uvage.from_image(target_arrows[0][0].x, target_arrows[0][0].y, target_arrows[0][1] + "_arrow_hit.png"), target_arrows[0][1]]]
     del(target_arrows[0])
     streak += 1
@@ -105,12 +113,15 @@ def del_arrows(arrow_type):
 
 def tick():
     global target_arrows, tick_count, grace, grace_period, zone_hit, hit_arrows, streak, missed_arrows, all_arrows, \
-        streak_display, speed, regen, health, game_on, highlight
+        streak_display, speed, regen, health, game_on, highlight, game_over
 
     camera.clear("white")
 
     if not game_on:
-        camera.draw(starting_screen)
+        if not game_over:
+            camera.draw(starting_screen)
+        else:
+            camera.draw(game_over_screen)
         if uvage.is_pressing("space"):
             game_on = True
 
@@ -176,6 +187,7 @@ def tick():
                 highlight = uvage.from_image(700, 530, "right_arrow.png")
         if health <= 0:
             game_on = False
+            game_over = True
 
         zone_feedback = uvage.from_text(400, 200, zone_hit, 30, "black")
 
