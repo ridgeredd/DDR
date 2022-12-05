@@ -6,7 +6,6 @@ tick_count = 0
 game_on = False
 start_ticks = 0
 draw_sps = True
-
 health_sides = [uvage.from_color(100, 50, "gray", 206, 54), uvage.from_color(700, 50, "gray", 206, 54)]
 health_background = uvage.from_color(400, 50, "white", 400, 54)
 upper_background = uvage.from_color(400, 0, "gray", 800, 200)
@@ -20,7 +19,6 @@ speed = 7
 health = 400
 regen = 5/30
 points = 0
-
 highlight = uvage.from_color(-100, -100, "black", 40, 40)
 
 camera = uvage.Camera(800, 600)
