@@ -5,6 +5,8 @@ tick_count = 0
 
 game_on = False
 
+health_background = [uvage.from_color(100, 50, "gray", 200, 54), uvage.from_color(700, 50, "gray", 200, 54)]
+upper_background = uvage.from_color(400, 0, "gray", 800, 200)
 grace = False
 game_over = False
 grace_period = 0
@@ -12,13 +14,13 @@ zone_hit = ""
 streak = 0
 streak_display = ""
 speed = 7
-health = 390
+health = 400
 regen = 5/30
 points = 0
 
 highlight = uvage.from_color(-100, -100, "black", 40, 40)
 
-camera = uvage.Camera(1000, 600)
+camera = uvage.Camera(800, 600)
 
 # make start and ending screen
 # make it so everything stops when health = 0
@@ -31,7 +33,7 @@ okay_zone = uvage.from_color(400, 530, "white", 800, 50)
 good_zone = uvage.from_color(400, 530, "white", 800, 30)
 excellent_zone = uvage.from_color(400, 530, "white", 800, 10)
 perfect_zone = uvage.from_color(400, 530, "black", 800, 4)
-health_bar = uvage.from_image(900, 250, "health_bar.png")
+health_bar = uvage.from_image(400, 50, "health_bar.png")
 
 starting_screen = uvage.from_text(400, 200, "press space bar to start", 50, "black")
 
@@ -117,14 +119,6 @@ def tick():
 
     camera.clear("white")
 
-    if not game_on:
-        if not game_over:
-            camera.draw(starting_screen)
-        else:
-            camera.draw(game_over_screen)
-        if uvage.is_pressing("space"):
-            game_on = True
-
     camera.draw(okay_zone)
     camera.draw(good_zone)
     camera.draw(excellent_zone)
@@ -200,8 +194,8 @@ def tick():
         if streak >= 15 and health < 390:
             health += regen
 
-        if health > 390:
-            health = 390
+        if health > 400:
+            health = 400
 
         tick_count += 1
         if grace:
@@ -212,11 +206,24 @@ def tick():
     display_arrows(missed_arrows)
     display_arrows(all_arrows)
 
-    health_meter = uvage.from_color(900, 640 - health, "red", 40, 390)
+    camera.draw(upper_background)
+
+    health_meter = uvage.from_color(health, 50, "red", 400, 54)
 
     camera.draw(health_meter)
 
     camera.draw(health_bar)
+
+    for x in health_background:
+        camera.draw(x)
+
+    if not game_on:
+        if not game_over:
+            camera.draw(starting_screen)
+        else:
+            camera.draw(game_over_screen)
+        if uvage.is_pressing("space"):
+            game_on = True
 
     camera.display()
 
