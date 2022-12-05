@@ -55,7 +55,14 @@ all_arrows = []
 
 
 def display_arrows(arrow_list):
+    """
+    changes y value and draws all arrows in list
+    :param arrow_list: arrows being manipulated
+    :return:
+    """
     for item in arrow_list:
+        # only fall if no missed arrows
+        # gives player time to readjust after missing
         if game_on and not missed_arrows:
             item[0].y += speed
         camera.draw(item[0])
@@ -65,9 +72,10 @@ def display_arrows(arrow_list):
 def find_arrow_zone():
     """
     finds feedback zone of arrow hit
-    :return:
+    :return: string feed_back zone. value depends on timing in hitting arrows
     """
     global target_arrows, hit_arrows, streak, streak_display, points
+    # checks if perfect first
     if target_arrows[0][0].touches(perfect_zone):
         return_zone = "perfect"
         points += 100
@@ -80,7 +88,9 @@ def find_arrow_zone():
     else:
         return_zone = "okay"
         points += 40
+    # creates gray arrow with same x and y value as arrow hit
     hit_arrows += [[uvage.from_image(target_arrows[0][0].x, target_arrows[0][0].y, target_arrows[0][1] + "_arrow_hit.png"), target_arrows[0][1]]]
+    # deletes arrow hit
     del(target_arrows[0])
     streak += 1
     streak_display = str(streak)
@@ -88,29 +98,51 @@ def find_arrow_zone():
 
 
 def button_pressed(key):
+    """
+    when user presses key makes appropriate changes to health and streak
+    :param key: string of key input pressed
+    :return:
+    """
     global zone_hit, streak, grace, missed_arrows, health
     zone_hit = "miss"
+    # checks that there are arrows needed to be hit so can index
     if len(target_arrows) != 0:
+        # checks if orientation of arrow is same as key pressed
+        # checks if user hit key within acceptable range
         if target_arrows[0][1] == key and target_arrows[0][0].touches(okay_zone):
+            # calles function to find feedback for arrow
             zone_hit = find_arrow_zone()
         else:
+            # if not hit or arrow is wrong, reset streak, lose health
             streak = 0
             health -= 50
+            # add red arrow to show user which arrow was missed
             missed_arrows += [
                 [uvage.from_image(target_arrows[0][0].x, target_arrows[0][0].y, target_arrows[0][1] + "_arrow_missed.png"),
                  target_arrows[0][1]]]
+            # delete arrow missed
             del (target_arrows[0])
     else:
+        # if button pressed but no arrows, reset streak and lose health
         health -= 50
         streak = 0
+    # start grace period so inputs are not double counted
     grace = True
     return
 
 
 def del_arrows(arrow_type):
+    """
+    deletes first arrow in the desired arrow list if is below the screen
+    :param arrow_type: list of arrows deleting offscreen arrows for
+    :return:
+    """
     global streak, target_arrows, all_arrows, missed_arrows, hit_arrows, health
+    # checks length to avoid indexing error
+    # if first arrow in list is below screen, delete it
     if len(arrow_type) != 0 and arrow_type[0][0].top > camera.bottom:
         del (arrow_type[0])
+        # if target arrows go below screen reset streak and lose health
         if arrow_type == target_arrows:
             streak = 0
             health -= 25
