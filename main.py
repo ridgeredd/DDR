@@ -28,6 +28,7 @@ camera = uvage.Camera(800, 600)
 # score counter in top left next to health bar
 # different scores for perfect, good, etc
 
+# zones
 okay_zone = uvage.from_color(400, 530, "white", 800, 50)
 good_zone = uvage.from_color(400, 530, "white", 800, 30)
 excellent_zone = uvage.from_color(400, 530, "white", 800, 10)
@@ -62,6 +63,10 @@ def display_arrows(arrow_list):
 
 
 def find_arrow_zone():
+    """
+    finds feedback zone of arrow hit
+    :return:
+    """
     global target_arrows, hit_arrows, streak, streak_display, points
     if target_arrows[0][0].touches(perfect_zone):
         return_zone = "perfect"
@@ -116,13 +121,16 @@ def tick():
     global target_arrows, tick_count, grace, grace_period, zone_hit, hit_arrows, streak, missed_arrows, all_arrows, \
         streak_display, speed, regen, health, game_on, highlight, game_over
 
+    # clears camera
     camera.clear("white")
 
+    # draws the hit zones which register how well arrow was hit
     camera.draw(okay_zone)
     camera.draw(good_zone)
     camera.draw(excellent_zone)
     camera.draw(perfect_zone)
 
+    # draws arrows at bottom of screen
     camera.draw(left_target)
     camera.draw(right_target)
     camera.draw(up_target)
@@ -132,25 +140,33 @@ def tick():
 
         new_arrow = []
 
+        # highlights the arrow that was hit
         if grace_period:
             camera.draw(highlight)
 
+        # leaves missed arrows on screen for short period
+        # deletes them after
         if grace_period and grace_period % 10 == 0:
             if missed_arrows:
                 del missed_arrows[0]
 
+        # ends grace period
+        # resets variables showing zone of last arrow hit and current streak
         if grace_period % 10 == 0:
             grace = False
             grace_period = 0
             zone_hit = ""
             streak_display = ""
 
+        # deletes arrows if they are outside camera range
         del_arrows(target_arrows)
         del_arrows(hit_arrows)
         del_arrows(missed_arrows)
         del_arrows(all_arrows)
 
+        # adds new arrow if no current arrows or an arrow goes offscreen
         if len(all_arrows) == 0 or all_arrows[-1][0].y >= 50:
+            # arrow is either left, right, up, down or just a space
             x = random.randint(0, 8)
             blank_arrow = [uvage.from_color(-100, -100, "black", 40, 40), "none"]
             if 1 <= x < 3:
@@ -165,7 +181,10 @@ def tick():
                 target_arrows += [new_arrow]
             all_arrows += [blank_arrow]
 
+        # inputs aren't valid during grace period so cannot spam button
         if not grace:
+            # highlights the arrow pressed at the bottom of screen
+            # registers what arrow was pressed
             if uvage.is_pressing("left arrow"):
                 button_pressed("left")
                 highlight = uvage.from_image(100, 530, "left_arrow.png")
@@ -178,52 +197,67 @@ def tick():
             if uvage.is_pressing("right arrow"):
                 button_pressed("right")
                 highlight = uvage.from_image(700, 530, "right_arrow.png")
+        # when health is < 0 game ends
         if health <= 0:
             game_on = False
             game_over = True
 
+        # displays text showing how well arrow was hit
         zone_feedback = uvage.from_text(400, 200, zone_hit, 30, "black")
-
         camera.draw(zone_feedback)
 
+        # displays current streak of arrows hit
         streak_counter = uvage.from_text(400, 300, streak_display, 30, "black")
-
         camera.draw(streak_counter)
 
+        # if health is not full and streak threshold is hit regain health
         if streak >= 15 and health < 400:
             health += regen
 
+        # if health goes over max from regen reset to max
         if health > 400:
             health = 400
 
+        # increment amount of ticks game has been on for
         tick_count += 1
+        # increment how long grace period has lasted
         if grace:
             grace_period += 1
 
+    # display all arrows either hit, missed, meant to be hit
     display_arrows(target_arrows)
     display_arrows(hit_arrows)
     display_arrows(missed_arrows)
     display_arrows(all_arrows)
 
+    # draws part of gray border for health bar
     camera.draw(upper_background)
 
+    # creates red box representing amount of health
     health_meter = uvage.from_color(health, 50, "red", 400, 54)
 
+    # draws white behind health meter for contrast
     camera.draw(health_background)
 
+    # draws health meter overtop background
     camera.draw(health_meter)
 
+    # draws sides of gray border so health meter does not spill past border when health decreases
     for x in health_sides:
         camera.draw(x)
 
+    # if game is not on and player has not lost draw starting screen
     if not game_on:
         if not game_over:
             camera.draw(starting_screen)
+        # if game is not on because player lost draw game over
         else:
             camera.draw(game_over_screen)
+        # if player presses space game is reset to true
         if uvage.is_pressing("space"):
             game_on = True
 
+    # draws casing for health meter
     camera.draw(health_bar)
 
     camera.display()
