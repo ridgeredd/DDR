@@ -5,7 +5,8 @@ tick_count = 0
 
 game_on = False
 
-health_background = [uvage.from_color(100, 50, "gray", 200, 54), uvage.from_color(700, 50, "gray", 200, 54)]
+health_sides = [uvage.from_color(100, 50, "gray", 206, 54), uvage.from_color(700, 50, "gray", 206, 54)]
+health_background = uvage.from_color(400, 50, "white", 400, 54)
 upper_background = uvage.from_color(400, 0, "gray", 800, 200)
 grace = False
 game_over = False
@@ -191,7 +192,7 @@ def tick():
 
         camera.draw(streak_counter)
 
-        if streak >= 15 and health < 390:
+        if streak >= 15 and health < 400:
             health += regen
 
         if health > 400:
@@ -210,11 +211,11 @@ def tick():
 
     health_meter = uvage.from_color(health, 50, "red", 400, 54)
 
+    camera.draw(health_background)
+
     camera.draw(health_meter)
 
-    camera.draw(health_bar)
-
-    for x in health_background:
+    for x in health_sides:
         camera.draw(x)
 
     if not game_on:
@@ -224,6 +225,8 @@ def tick():
             camera.draw(game_over_screen)
         if uvage.is_pressing("space"):
             game_on = True
+
+    camera.draw(health_bar)
 
     camera.display()
 
