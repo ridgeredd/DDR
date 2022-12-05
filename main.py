@@ -4,6 +4,8 @@ import random
 tick_count = 0
 
 game_on = False
+start_ticks = 0
+draw_sps = True
 
 health_sides = [uvage.from_color(100, 50, "gray", 206, 54), uvage.from_color(700, 50, "gray", 206, 54)]
 health_background = uvage.from_color(400, 50, "white", 400, 54)
@@ -31,11 +33,15 @@ camera = uvage.Camera(800, 600)
 # zones
 okay_zone = uvage.from_color(400, 530, "white", 800, 50)
 good_zone = uvage.from_color(400, 530, "white", 800, 30)
-excellent_zone = uvage.from_color(400, 530, "white", 800, 10)
+excellent_zone = uvage.from_color(400, 530, "white", 800, 15)
 perfect_zone = uvage.from_color(400, 530, "black", 800, 4)
 health_bar = uvage.from_image(400, 50, "health_bar.png")
 
-starting_screen = uvage.from_text(400, 200, "press space bar to start", 50, "black")
+
+starting_screen = [uvage.from_text(400, 200, "COMPUTER SCIENCE", 50, "blue"),
+                   uvage.from_text(400, 250, "COMPUTER SCIENCE", 50, "purple"),
+                   uvage.from_text(400, 300, "REVOLUTION", 50, "green")]
+space_to_start = uvage.from_text(400, 400, "press space bar to start", 50, "black")
 
 game_over_screen = uvage.from_text(400, 200, "GAME OVER", 50, "red", bold = True)
 
@@ -77,10 +83,10 @@ def find_arrow_zone():
     global target_arrows, hit_arrows, streak, streak_display, points
     # checks if perfect first
     if target_arrows[0][0].touches(perfect_zone):
-        return_zone = "perfect"
+        return_zone = "PERFECT!"
         points += 100
     elif target_arrows[0][0].touches(excellent_zone):
-        return_zone = "excellent"
+        return_zone = "excellent!"
         points += 70
     elif target_arrows[0][0].touches(good_zone):
         return_zone = "good"
@@ -145,13 +151,13 @@ def del_arrows(arrow_type):
         # if target arrows go below screen reset streak and lose health
         if arrow_type == target_arrows:
             streak = 0
-            health -= 25
+            health -= 50
     return
 
 
 def tick():
     global target_arrows, tick_count, grace, grace_period, zone_hit, hit_arrows, streak, missed_arrows, all_arrows, \
-        streak_display, speed, regen, health, game_on, highlight, game_over
+        streak_display, speed, regen, health, game_on, highlight, game_over, start_ticks, draw_sps
 
     # clears camera
     camera.clear("white")
@@ -235,7 +241,7 @@ def tick():
             game_over = True
 
         # displays text showing how well arrow was hit
-        zone_feedback = uvage.from_text(400, 200, zone_hit, 30, "black")
+        zone_feedback = uvage.from_text(400, 250, zone_hit, 30, "black")
         camera.draw(zone_feedback)
 
         # displays current streak of arrows hit
@@ -281,7 +287,13 @@ def tick():
     # if game is not on and player has not lost draw starting screen
     if not game_on:
         if not game_over:
-            camera.draw(starting_screen)
+            start_ticks += 1
+            for x in starting_screen:
+                camera.draw(x)
+            if start_ticks % 10 == 0:
+                draw_sps = not draw_sps
+            if draw_sps:
+                camera.draw(space_to_start)
         # if game is not on because player lost draw game over
         else:
             camera.draw(game_over_screen)
