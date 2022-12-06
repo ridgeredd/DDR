@@ -31,7 +31,8 @@ Additonal Features:
 Health Bar: displayed at the top of the screen. As arrows are missed you lose health. If health drops to or below 0,
 game ends
 
-Inter-session Progress: after game, prompts you to add your name and takes your score to add to a high scores file.
+Inter-session Progress: after game, if your score is in top 5 scores it takes your score to add to a high scores file.
+These 5 scores are displayed after the game ends
 
 Sprite animation: When users hit arrow within acceptable window, the arrow will change to a gray version of itself.
 When users miss an arrow by pressing the wrong key, the missed arrow will show up as red before disappearing. Lastly,
